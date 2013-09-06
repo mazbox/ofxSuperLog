@@ -15,23 +15,24 @@ ofPtr<ofxSuperLog> &ofxSuperLog::getLogger(bool writeToConsole, bool drawToScree
 		logger = ofPtr<ofxSuperLog>(logPtr);
 
 	}
-	
-	
+
+
 	return logger;
 }
 
 
 ofxSuperLog::ofxSuperLog(bool writeToConsole, bool drawToScreen, string logDirectory) {
-	
+
 	this->loggingToFile = logDirectory!="";
 	this->loggingToScreen = drawToScreen;
 	this->loggingToConsole = writeToConsole;
+	this->logDirectory = logDirectory;
 	if(loggingToFile) {
 		if(!ofFile(logDirectory).exists()) {
 			ofDirectory dir(logDirectory);
 			dir.create();
 		}
-		
+
 		fileLogger.setFile(logDirectory + "/" + ofGetTimestampString() + ".log");
 	}
 	if(drawToScreen) {
@@ -42,12 +43,30 @@ ofxSuperLog::ofxSuperLog(bool writeToConsole, bool drawToScreen, string logDirec
 ofxSuperLog::~ofxSuperLog() {
 }
 
+
+
+
+void ofxSuperLog::archiveOldLogs(int numUncompressedToKeep, int numCompressedToKeep) {
+    if(numUncompressedToKeep==-1) return;
+    if(logDirectory=="") {
+        ofLogError() << "Must specify a log directory - can't be \"\"";
+        return;
+    }
+    ofDirectory dir;
+    dir.allowExt("log");
+    dir.listDir(logDirectory);
+    dir.sort();
+   // while(numUncompressedToKeep<dir.size())
+   ofLogError() << "This isn't implemented yet!";
+}
+
+
 void ofxSuperLog::log(ofLogLevel level, const string & module, const string & message) {
 
 	if(loggingToFile) fileLogger.log(level, module, message);
 	if(loggingToConsole) consoleLogger.log(level, module, message);
 	if(loggingToScreen) displayLogger.log(level, module, message);
-	
+
 }
 
 void ofxSuperLog::log(ofLogLevel logLevel, const string & module, const char* format, ...) {
@@ -62,7 +81,7 @@ void ofxSuperLog::log(ofLogLevel logLevel, const string & module, const char* fo
 	if(loggingToFile) fileLogger.log(logLevel, module, format, args);
 	if(loggingToConsole) consoleLogger.log(logLevel, module, format, args);
 	if(loggingToScreen) displayLogger.log(logLevel, module, format, args);
-	
+
 }
 
 void ofxSuperLog::setMaxNumLogLines(int maxNumLogLines) {
