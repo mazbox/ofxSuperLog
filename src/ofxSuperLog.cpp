@@ -58,6 +58,16 @@ void ofxSuperLog::archiveOldLogs(int numUncompressedToKeep, int numCompressedToK
     dir.sort();
    // while(numUncompressedToKeep<dir.size())
    ofLogError() << "This isn't implemented yet!";
+
+   /*
+   // MUST use binary!
+std::ofstream out("test.zip", std::ios::binary);
+Compress c(out, true);
+Poco::Path aFile("c:\\data\\hello.txt");
+c.addFile(theFile, "hello.txt");
+c.close(); // MUST be done to finalize the Zip file
+
+*/
 }
 
 
